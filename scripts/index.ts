@@ -30,24 +30,7 @@ Kairo.onScriptEvent = (message: string) => {
      * Write the handler logic for when the addon receives a scriptEvent
      * The only available property is { message }
      */
-
-    const splitMessage = message.split(" ");
-    const command = splitMessage[0];
-    const key = splitMessage[1];
-    if (key === undefined) {
-        ConsoleManager.error(`Key is undefined in message: ${message}`);
-        return;
-    }
-    const value = splitMessage.slice(2).join("");
-
-    switch (command) {
-        case SCRIPT_EVENT_COMMAND_IDS.SAVE_DATA:
-            DataVaultManager.getInstance().saveData(key, value);
-            break;
-        case SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA:
-            DataVaultManager.getInstance().loadData(key);
-            break;
-    }
+    DataVaultManager.getInstance().handleScriptEvent(message);
 };
 
 main();

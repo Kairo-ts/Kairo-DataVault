@@ -1,10 +1,13 @@
 import { DataVaultReceiver } from "./DataVaultReceiver";
+import { DynamicPropertyStorage } from "./DynamicPropertyStorage";
 
 export class DataVaultManager {
     private readonly dataVaultReceiver: DataVaultReceiver;
+    private readonly dynamicPropertyStorage: DynamicPropertyStorage;
     private static instance: DataVaultManager;
     private constructor() {
         this.dataVaultReceiver = DataVaultReceiver.create(this);
+        this.dynamicPropertyStorage = DynamicPropertyStorage.create(this);
     }
 
     public static getInstance(): DataVaultManager {
@@ -14,11 +17,15 @@ export class DataVaultManager {
         return DataVaultManager.instance;
     }
 
+    public handleScriptEvent(message: string): void {
+        this.dataVaultReceiver.handleScriptEvent(message);
+    }
+
     public saveData(key: string, value: string): void {
-        this.dataVaultReceiver.save(key, value);
+        this.dynamicPropertyStorage.save(key, value);
     }
 
     public loadData(key: string): void {
-        this.dataVaultReceiver.load(key);
+        this.dynamicPropertyStorage.load(key);
     }
 }
