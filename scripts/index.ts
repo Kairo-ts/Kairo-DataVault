@@ -1,4 +1,7 @@
+import { SCRIPT_EVENT_COMMAND_IDS } from "./Kairo-DataVault/constants";
+import { DataVaultManager } from "./Kairo-DataVault/DataVaultManager";
 import { Kairo } from "./Kairo/index";
+import { ConsoleManager } from "./Kairo/utils/ConsoleManager";
 
 async function main(): Promise<void> {
     Kairo.init(); // client
@@ -27,6 +30,24 @@ Kairo.onScriptEvent = (message: string) => {
      * Write the handler logic for when the addon receives a scriptEvent
      * The only available property is { message }
      */
+
+    const splitMessage = message.split(" ");
+    const command = splitMessage[0];
+    const key = splitMessage[1];
+    if (key === undefined) {
+        ConsoleManager.error(`Key is undefined in message: ${message}`);
+        return;
+    }
+    const value = splitMessage.slice(2).join("");
+
+    switch (command) {
+        case SCRIPT_EVENT_COMMAND_IDS.SAVE_DATA:
+            DataVaultManager.getInstance().saveData(key, value);
+            break;
+        case SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA:
+            DataVaultManager.getInstance().loadData(key);
+            break;
+    }
 };
 
 main();
