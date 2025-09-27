@@ -1,4 +1,4 @@
-import { DataVaultReceiver } from "./DataVaultReceiver";
+import { DataVaultReceiver } from "./ScriptEventReceiver";
 import { DynamicPropertyStorage } from "./DynamicPropertyStorage";
 export class DataVaultManager {
     constructor() {
@@ -11,13 +11,13 @@ export class DataVaultManager {
         }
         return DataVaultManager.instance;
     }
-    handleScriptEvent(message) {
-        this.dataVaultReceiver.handleScriptEvent(message);
+    handleOnScriptEvent(message) {
+        this.dataVaultReceiver.handleOnScriptEvent(message);
     }
     saveData(addonId, key, value) {
         this.dynamicPropertyStorage.save(addonId, key, value);
     }
     loadData(addonId, key) {
-        this.dynamicPropertyStorage.load(addonId, key);
+        return this.dynamicPropertyStorage.load(addonId, key);
     }
 }

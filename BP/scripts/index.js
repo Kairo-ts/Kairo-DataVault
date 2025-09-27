@@ -1,7 +1,5 @@
-import { SCRIPT_EVENT_COMMAND_IDS } from "./Kairo-DataVault/constants";
 import { DataVaultManager } from "./Kairo-DataVault/DataVaultManager";
 import { Kairo } from "./Kairo/index";
-import { ConsoleManager } from "./Kairo/utils/ConsoleManager";
 async function main() {
     Kairo.init(); // client
 }
@@ -26,6 +24,6 @@ Kairo.onScriptEvent = (message) => {
      * Write the handler logic for when the addon receives a scriptEvent
      * The only available property is { message }
      */
-    DataVaultManager.getInstance().handleScriptEvent(message);
+    DataVaultManager.getInstance().handleOnScriptEvent(message);
 };
 main();
