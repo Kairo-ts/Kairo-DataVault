@@ -25,7 +25,7 @@ export class DataVaultManager {
         this.dynamicPropertyStorage.save(addonId, key, value);
     }
 
-    public loadData(addonId: string, key: string): void {
-        this.dynamicPropertyStorage.load(addonId, key);
+    public loadData(addonId: string, key: string): string {
+        return this.dynamicPropertyStorage.load(addonId, key);
     }
 }

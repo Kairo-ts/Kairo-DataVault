@@ -1,3 +1,4 @@
+import { system } from "@minecraft/server";
 import { ConsoleManager } from "../Kairo/utils/ConsoleManager";
 import { SCRIPT_EVENT_COMMAND_IDS } from "./constants";
 import type { DataVaultManager } from "./DataVaultManager";
@@ -28,7 +29,8 @@ export class DataVaultReceiver {
                 this.dataVaultManager.saveData(addonId, key, value);
                 break;
             case SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA:
-                this.dataVaultManager.loadData(addonId, key);
+                const data = this.dataVaultManager.loadData(addonId, key);
+                system.sendScriptEvent(addonId, `${SCRIPT_EVENT_COMMAND_IDS.DATA_LOADED} ${key} ${data}`);
                 break;
         }
     }

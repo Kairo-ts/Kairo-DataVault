@@ -1,7 +1,5 @@
-import { SCRIPT_EVENT_COMMAND_IDS } from "./Kairo-DataVault/constants";
 import { DataVaultManager } from "./Kairo-DataVault/DataVaultManager";
 import { Kairo } from "./Kairo/index";
-import { ConsoleManager } from "./Kairo/utils/ConsoleManager";
 
 async function main(): Promise<void> {
     Kairo.init(); // client
