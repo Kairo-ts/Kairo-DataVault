@@ -1,0 +1,33 @@
+import { ConsoleManager } from "../Kairo/utils/ConsoleManager";
+import { SCRIPT_EVENT_COMMAND_IDS } from "./constants";
+export class DataVaultReceiver {
+    constructor(dataVaultManager) {
+        this.dataVaultManager = dataVaultManager;
+    }
+    static create(dataVaultManager) {
+        return new DataVaultReceiver(dataVaultManager);
+    }
+    handleScriptEvent(message) {
+        const splitMessage = message.split(" ");
+        const command = splitMessage[0];
+        const addonId = splitMessage[1];
+        if (addonId === undefined) {
+            ConsoleManager.error(`Addon ID is undefined in message: ${message}`);
+            return;
+        }
+        const key = splitMessage[2];
+        if (key === undefined) {
+            ConsoleManager.error(`Key is undefined in message: ${message}`);
+            return;
+        }
+        const value = splitMessage.slice(3).join("");
+        switch (command) {
+            case SCRIPT_EVENT_COMMAND_IDS.SAVE_DATA:
+                this.dataVaultManager.saveData(addonId, key, value);
+                break;
+            case SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA:
+                this.dataVaultManager.loadData(addonId, key);
+                break;
+        }
+    }
+}

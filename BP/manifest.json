@@ -3,7 +3,7 @@
   "header": {
     "name": "Kairo-DataVault",
     "description": "It is a dedicated storage module, designed to be immutable and stable across all future versions of Minecraft",
-    "uuid": "c839e027-0630-4390-927e-765905300091",
+    "uuid": "f2d7b2e4-44d9-4b46-bda8-727fb8f848f3",
     "version": [
       1,
       0,
@@ -17,8 +17,10 @@
   },
   "modules": [
     {
-      "type": "resources",
-      "uuid": "5c39cd64-6cb6-4171-82be-136765cb538d",
+      "type": "script",
+      "language": "javascript",
+      "entry": "scripts/index.js",
+      "uuid": "2b2dac89-9772-4a56-8661-e422915aa4e1",
       "version": [
         1,
         0,
@@ -28,7 +30,15 @@
   ],
   "dependencies": [
     {
-      "uuid": "f2d7b2e4-44d9-4b46-bda8-727fb8f848f3",
+      "module_name": "@minecraft/server",
+      "version": "2.1.0"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "2.0.0"
+    },
+    {
+      "uuid": "c839e027-0630-4390-927e-765905300091",
       "version": [
         1,
         0,
