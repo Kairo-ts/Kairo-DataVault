@@ -21,11 +21,11 @@ export class DataVaultManager {
         this.dataVaultReceiver.handleScriptEvent(message);
     }
 
-    public saveData(key: string, value: string): void {
-        this.dynamicPropertyStorage.save(key, value);
+    public saveData(addonId: string, key: string, value: string): void {
+        this.dynamicPropertyStorage.save(addonId, key, value);
     }
 
-    public loadData(key: string): void {
-        this.dynamicPropertyStorage.load(key);
+    public loadData(addonId: string, key: string): void {
+        this.dynamicPropertyStorage.load(addonId, key);
     }
 }
