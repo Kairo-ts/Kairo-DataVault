@@ -47,4 +47,8 @@ export class AddonInitializer {
     public getRegistrationNum(): number {
         return this.registrationNum;
     }
+
+    public subscribeReceiverHooks(): void {
+        this.kairo.subscribeReceiverHooks();
+    }
 }
