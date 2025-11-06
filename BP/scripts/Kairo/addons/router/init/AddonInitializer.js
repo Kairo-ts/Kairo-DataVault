@@ -36,4 +36,7 @@ export class AddonInitializer {
     subscribeReceiverHooks() {
         this.kairo.subscribeReceiverHooks();
     }
+    sendInitializationCompleteResponse() {
+        this.response.sendInitializationCompleteResponse();
+    }
 }
