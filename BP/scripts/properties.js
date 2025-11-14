@@ -10,9 +10,7 @@ export const properties = {
     id: "kairo-datavault", // a-z & 0-9 - _
     metadata: {
         /** 製作者の名前 */
-        authors: [
-            "shizuku86"
-        ]
+        authors: ["shizuku86"],
     },
     header: {
         name: "Kairo-DataVault",
@@ -25,7 +23,7 @@ export const properties = {
             // build: "abc123",
         },
         min_engine_version: [1, 21, 100],
-        uuid: "f2d7b2e4-44d9-4b46-bda8-727fb8f848f3"
+        uuid: "f2d7b2e4-44d9-4b46-bda8-727fb8f848f3",
     },
     resourcepack: {
         name: "Use BP Name",
@@ -39,25 +37,25 @@ export const properties = {
             language: "javascript",
             entry: "scripts/index.js",
             version: "header.version",
-            uuid: "2b2dac89-9772-4a56-8661-e422915aa4e1"
-        }
+            uuid: "2b2dac89-9772-4a56-8661-e422915aa4e1",
+        },
     ],
     dependencies: [
         {
             module_name: "@minecraft/server",
-            version: "2.1.0"
+            version: "2.1.0",
         },
         {
             module_name: "@minecraft/server-ui",
-            version: "2.0.0"
-        }
+            version: "2.0.0",
+        },
     ],
     /** 前提アドオン */
     requiredAddons: {
         /**
          * id: version (string) // "kairo": "1.0.0"
          */
-        "kairo": "1.0.0-dev.1"
+        kairo: "1.0.0-dev.1",
     },
     tags: [
     // "stable",
@@ -70,9 +68,4 @@ export const properties = {
  * For approved addons, assign "approved".
  *
  */
-export const supportedTags = [
-    "official",
-    "approved",
-    "stable",
-    "experimental"
-];
+export const supportedTags = ["official", "approved", "stable", "experimental"];

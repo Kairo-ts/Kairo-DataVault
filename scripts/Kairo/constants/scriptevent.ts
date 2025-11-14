@@ -1,6 +1,6 @@
 export const SCRIPT_EVENT_ID_PREFIX = {
-    KAIRO: "kairo"
-}
+    KAIRO: "kairo",
+};
 
 export const SCRIPT_EVENT_IDS = {
     BEHAVIOR_REGISTRATION_REQUEST: "kairo:registrationRequest",
@@ -9,11 +9,11 @@ export const SCRIPT_EVENT_IDS = {
     BEHAVIOR_INITIALIZATION_COMPLETE_RESPONSE: "kairo:initializationCompleteResponse",
     UNSUBSCRIBE_INITIALIZE: "kairo:unsubscribeInitialize",
     REQUEST_RESEED_SESSION_ID: "kairo:reseedSessionId",
-    SHOW_ADDON_LIST: "kairo:showAddonList"
-}
+    SHOW_ADDON_LIST: "kairo:showAddonList",
+};
 
 export const SCRIPT_EVENT_MESSAGES = {
     NONE: "",
     ACTIVATE_REQUEST: "activate request",
-    DEACTIVATE_REQUEST: "deactivate request"
-}
+    DEACTIVATE_REQUEST: "deactivate request",
+};

@@ -27,8 +27,8 @@ export interface AddonData {
             requiredAddons?: {
                 [name: string]: string;
             };
-        }
-    }
+        };
+    };
 }
 
 export class AddonManager {
