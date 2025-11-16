@@ -117,6 +117,8 @@ export class Kairo {
                 );
             }
         }
+
+        this.getInstance().addonManager.setActiveState(true);
     }
 
     private static async _runDeactivateHooks() {
@@ -131,6 +133,8 @@ export class Kairo {
                 );
             }
         }
+
+        this.getInstance().addonManager.setActiveState(false);
     }
 
     private static async _runScriptEvent(message: string) {
