@@ -1,3 +1,4 @@
+import type { KairoCommand } from "../Kairo/utils/KairoUtils";
 import { DataVaultReceiver } from "./DataVaultReceiver";
 import { DynamicPropertyStorage } from "./DynamicPropertyStorage";
 
@@ -17,8 +18,8 @@ export class DataVaultManager {
         return DataVaultManager.instance;
     }
 
-    public handleScriptEvent(message: string): void {
-        this.dataVaultReceiver.handleScriptEvent(message);
+    public handleScriptEvent(data: KairoCommand): void {
+        this.dataVaultReceiver.handleScriptEvent(data);
     }
 
     public saveData(addonId: string, key: string, value: string): void {

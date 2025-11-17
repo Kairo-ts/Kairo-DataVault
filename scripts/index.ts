@@ -1,7 +1,6 @@
-import { SCRIPT_EVENT_COMMAND_IDS } from "./Kairo-DataVault/constants";
 import { DataVaultManager } from "./Kairo-DataVault/DataVaultManager";
 import { Kairo } from "./Kairo/index";
-import { ConsoleManager } from "./Kairo/utils/ConsoleManager";
+import type { KairoCommand } from "./Kairo/utils/KairoUtils";
 
 async function main(): Promise<void> {
     Kairo.init(); // client
@@ -23,14 +22,14 @@ Kairo.onDeactivate = () => {
      */
 };
 
-Kairo.onScriptEvent = (message: string) => {
+Kairo.onScriptEvent = (data: KairoCommand) => {
     /**
      * ここにはアドオンが scriptEvent を受け取った際の処理を書く
      * 利用できるプロパティは { message } のみ
      * Write the handler logic for when the addon receives a scriptEvent
      * The only available property is { message }
      */
-    DataVaultManager.getInstance().handleScriptEvent(message);
+    DataVaultManager.getInstance().handleScriptEvent(data);
 };
 
 main();

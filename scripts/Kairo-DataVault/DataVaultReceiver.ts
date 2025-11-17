@@ -1,4 +1,5 @@
 import { ConsoleManager } from "../Kairo/utils/ConsoleManager";
+import type { KairoCommand } from "../Kairo/utils/KairoUtils";
 import { SCRIPT_EVENT_COMMAND_IDS } from "./constants";
 import type { DataVaultManager } from "./DataVaultManager";
 
@@ -13,36 +14,28 @@ export class DataVaultReceiver {
         SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA,
     ]);
 
-    public handleScriptEvent(message: string): void {
-        const splitMessage = message.split(" ");
-        const command = splitMessage[0];
-        if (!command) return;
-
-        if (!DataVaultReceiver.VALID_COMMANDS.has(command)) {
+    public handleScriptEvent(data: KairoCommand): void {
+        if (!DataVaultReceiver.VALID_COMMANDS.has(data.commandId)) {
             return;
         }
 
-        const addonId = splitMessage[1];
-        if (!addonId) {
-            ConsoleManager.error(`Addon ID missing: ${message}`);
+        if (!data.addonId) {
+            ConsoleManager.error(`Addon ID missing: ${data}`);
             return;
         }
 
-        const key = splitMessage[2];
-        if (!key) {
-            ConsoleManager.error(`Key missing: ${message}`);
+        if (!data.key) {
+            ConsoleManager.error(`Key missing: ${data}`);
             return;
         }
 
-        const value = splitMessage.slice(3).join(" ");
-
-        switch (command) {
+        switch (data.commandId) {
             case SCRIPT_EVENT_COMMAND_IDS.SAVE_DATA:
-                this.dataVaultManager.saveData(addonId, key, value);
+                this.dataVaultManager.saveData(data.addonId, data.key, data.value);
                 break;
 
             case SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA:
-                this.dataVaultManager.loadData(addonId, key);
+                this.dataVaultManager.loadData(data.addonId, data.key);
                 break;
         }
     }

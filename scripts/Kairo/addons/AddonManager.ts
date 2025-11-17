@@ -2,6 +2,7 @@ import type { Kairo } from "..";
 import type { AddonProperty } from "./AddonPropertyManager";
 import { system } from "@minecraft/server";
 import { AddonReceiver } from "./router/AddonReceiver";
+import type { KairoCommand } from "../utils/KairoUtils";
 
 export type RegistrationState = "registered" | "unregistered" | "missing_requiredAddons";
 
@@ -59,8 +60,8 @@ export class AddonManager {
         this.kairo._deactivateAddon();
     }
 
-    public _scriptEvent(message: string): void {
-        this.kairo._scriptEvent(message);
+    public _scriptEvent(data: KairoCommand): void {
+        this.kairo._scriptEvent(data);
     }
 
     public get isActive(): boolean {
