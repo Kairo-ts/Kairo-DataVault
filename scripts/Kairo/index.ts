@@ -13,7 +13,7 @@ type HandlerOptions = {
 };
 
 type Assignable<T> = T | { run: T; options?: HandlerOptions };
-type Stored<T> = { fn: T; priority: number; };
+type Stored<T> = { fn: T; priority: number };
 
 export class Kairo {
     private static instance: Kairo;
@@ -78,9 +78,15 @@ export class Kairo {
         else this._pushSorted(this._seHooks, val.run, val.options);
     }
 
-    public static addActivate(fn: ActivateHandler, opt?: HandlerOptions) { this._pushSorted(this._initHooks, fn, opt); }
-    public static addDeactivate(fn: DeactivateHandler, opt?: HandlerOptions) { this._pushSorted(this._deinitHooks, fn, opt); }
-    public static addScriptEvent(fn: ScriptEventHandler, opt?: HandlerOptions) { this._pushSorted(this._seHooks, fn, opt); }
+    public static addActivate(fn: ActivateHandler, opt?: HandlerOptions) {
+        this._pushSorted(this._initHooks, fn, opt);
+    }
+    public static addDeactivate(fn: DeactivateHandler, opt?: HandlerOptions) {
+        this._pushSorted(this._deinitHooks, fn, opt);
+    }
+    public static addScriptEvent(fn: ScriptEventHandler, opt?: HandlerOptions) {
+        this._pushSorted(this._seHooks, fn, opt);
+    }
 
     public _scriptEvent(message: string): void {
         void Kairo._runScriptEvent(message);
@@ -101,22 +107,47 @@ export class Kairo {
 
     private static async _runActivateHooks() {
         for (const { fn } of this._initHooks) {
-            try { await fn(); }
-            catch (e) { system.run(() => console.warn(`[Kairo.onActivate] ${e instanceof Error ? e.stack ?? e.message : String(e)}`)); }
+            try {
+                await fn();
+            } catch (e) {
+                system.run(() =>
+                    console.warn(
+                        `[Kairo.onActivate] ${e instanceof Error ? (e.stack ?? e.message) : String(e)}`,
+                    ),
+                );
+            }
         }
+
+        this.getInstance().addonManager.setActiveState(true);
     }
 
     private static async _runDeactivateHooks() {
         for (const { fn } of [...this._deinitHooks].reverse()) {
-            try { await fn(); }
-            catch (e) { system.run(() => console.warn(`[Kairo.onDeactivate] ${e instanceof Error ? e.stack ?? e.message : String(e)}`)); }
+            try {
+                await fn();
+            } catch (e) {
+                system.run(() =>
+                    console.warn(
+                        `[Kairo.onDeactivate] ${e instanceof Error ? (e.stack ?? e.message) : String(e)}`,
+                    ),
+                );
+            }
         }
+
+        this.getInstance().addonManager.setActiveState(false);
     }
 
     private static async _runScriptEvent(message: string) {
         for (const { fn } of this._seHooks) {
-            try { await fn(message); }
-            catch (e) { system.run(() => console.warn(`[Kairo.onScriptEvent] ${e instanceof Error ? e.stack ?? e.message : String(e)}`)); }
+            try {
+                await fn(message);
+            } catch (e) {
+                system.run(() =>
+                    console.warn(
+                        `[Kairo.onScriptEvent] ${e instanceof Error ? (e.stack ?? e.message) : String(e)}`,
+                    ),
+                );
+            }
         }
     }
 }

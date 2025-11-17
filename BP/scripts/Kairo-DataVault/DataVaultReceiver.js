@@ -10,17 +10,22 @@ export class DataVaultReceiver {
     handleScriptEvent(message) {
         const splitMessage = message.split(" ");
         const command = splitMessage[0];
+        if (!command)
+            return;
+        if (!DataVaultReceiver.VALID_COMMANDS.has(command)) {
+            return;
+        }
         const addonId = splitMessage[1];
-        if (addonId === undefined) {
-            ConsoleManager.error(`Addon ID is undefined in message: ${message}`);
+        if (!addonId) {
+            ConsoleManager.error(`Addon ID missing: ${message}`);
             return;
         }
         const key = splitMessage[2];
-        if (key === undefined) {
-            ConsoleManager.error(`Key is undefined in message: ${message}`);
+        if (!key) {
+            ConsoleManager.error(`Key missing: ${message}`);
             return;
         }
-        const value = splitMessage.slice(3).join("");
+        const value = splitMessage.slice(3).join(" ");
         switch (command) {
             case SCRIPT_EVENT_COMMAND_IDS.SAVE_DATA:
                 this.dataVaultManager.saveData(addonId, key, value);
@@ -31,3 +36,7 @@ export class DataVaultReceiver {
         }
     }
 }
+DataVaultReceiver.VALID_COMMANDS = new Set([
+    SCRIPT_EVENT_COMMAND_IDS.SAVE_DATA,
+    SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA,
+]);

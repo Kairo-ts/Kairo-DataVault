@@ -27,12 +27,14 @@ export interface AddonData {
             requiredAddons?: {
                 [name: string]: string;
             };
-        }
-    }
+        };
+    };
 }
 
 export class AddonManager {
     private readonly receiver: AddonReceiver;
+
+    private _isActive: boolean = false;
 
     private constructor(private readonly kairo: Kairo) {
         this.receiver = AddonReceiver.create(this);
@@ -59,5 +61,13 @@ export class AddonManager {
 
     public _scriptEvent(message: string): void {
         this.kairo._scriptEvent(message);
+    }
+
+    public get isActive(): boolean {
+        return this._isActive;
+    }
+
+    public setActiveState(state: boolean): void {
+        this._isActive = state;
     }
 }

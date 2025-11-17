@@ -94,7 +94,6 @@ export class DynamicPropertyStorage {
         }
     }
 
-
     public delete(addonId: string, key: string): void {
         const prefix = this.makePrefix(addonId, key);
         const count = this.getCount(prefix);
