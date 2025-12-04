@@ -1,3 +1,6 @@
+import { KairoUtils } from "../Kairo/utils/KairoUtils";
+import { properties } from "../properties";
+import { SCRIPT_EVENT_COMMAND_IDS } from "./constants";
 import { DataVaultReceiver } from "./DataVaultReceiver";
 import { DynamicPropertyStorage } from "./DynamicPropertyStorage";
 export class DataVaultManager {
@@ -14,10 +17,19 @@ export class DataVaultManager {
     handleScriptEvent(data) {
         this.dataVaultReceiver.handleScriptEvent(data);
     }
-    saveData(addonId, key, value) {
-        this.dynamicPropertyStorage.save(addonId, key, value);
+    saveData(addonId, key, value, type) {
+        const parseValue = type === "string" ? value : JSON.parse(value);
+        this.dynamicPropertyStorage.save(addonId, key, parseValue, type);
     }
     loadData(addonId, key) {
-        this.dynamicPropertyStorage.load(addonId, key);
+        const dataLoaded = this.dynamicPropertyStorage.load(addonId, key);
+        const value = dataLoaded.type === "string" ? dataLoaded.value : JSON.stringify(dataLoaded.value);
+        KairoUtils.sendKairoCommand(addonId, {
+            commandId: SCRIPT_EVENT_COMMAND_IDS.DATA_LOADED,
+            addonId: properties.id,
+            key,
+            value,
+            type: dataLoaded.type,
+        });
     }
 }

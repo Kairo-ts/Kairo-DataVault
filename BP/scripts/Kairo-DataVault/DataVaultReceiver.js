@@ -21,7 +21,7 @@ export class DataVaultReceiver {
         }
         switch (data.commandId) {
             case SCRIPT_EVENT_COMMAND_IDS.SAVE_DATA:
-                this.dataVaultManager.saveData(data.addonId, data.key, data.value);
+                this.dataVaultManager.saveData(data.addonId, data.key, data.value, data.type);
                 break;
             case SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA:
                 this.dataVaultManager.loadData(data.addonId, data.key);

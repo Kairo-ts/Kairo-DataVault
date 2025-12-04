@@ -15,8 +15,13 @@ export class DynamicPropertyStorage {
     static create(dataVaultManager) {
         return new DynamicPropertyStorage(dataVaultManager);
     }
-    save(addonId, key, data) {
+    save(addonId, key, data, type) {
         const prefix = this.makePrefix(addonId, key);
+        if (type === "null") {
+            this.delete(addonId, key);
+            world.setDynamicProperty(this.typeKey(prefix), "null");
+            return;
+        }
         const totalChunks = Math.ceil((data?.length ?? 0) / this.CHUNK_SIZE);
         const prevCount = this.getCount(prefix);
         for (let i = 0; i < totalChunks; i++) {
@@ -32,17 +37,39 @@ export class DynamicPropertyStorage {
         }
         world.setDynamicProperty(this.countKey(prefix), totalChunks);
         world.setDynamicProperty(this.lenKey(prefix), data.length);
+        world.setDynamicProperty(this.typeKey(prefix), type);
     }
     load(addonId, key) {
         const prefix = this.makePrefix(addonId, key);
         const count = this.getCount(prefix);
-        if (!count || count <= 0)
-            return "";
-        let result = "";
-        for (let i = 0; i < count; i++) {
-            result += world.getDynamicProperty(this.chunkKey(prefix, i)) || "";
+        if (!count || count <= 0) {
+            return { value: null, type: "null" };
         }
-        return result;
+        const type = world.getDynamicProperty(this.typeKey(prefix));
+        if (type === "string") {
+            let result = "";
+            for (let i = 0; i < count; i++) {
+                result += world.getDynamicProperty(this.chunkKey(prefix, i)) || "";
+            }
+            return { value: result, type };
+        }
+        const raw = world.getDynamicProperty(this.chunkKey(prefix, 0));
+        if (raw === undefined) {
+            return { value: null, type: "null" };
+        }
+        switch (type) {
+            case "number":
+                return { value: raw, type };
+            case "boolean":
+                return { value: raw, type };
+            case "null":
+                return { value: null, type };
+            case "object":
+                // Vector3
+                return { value: raw, type };
+            default:
+                throw new Error(`Unknown stored type "${type}" for key "${key}"`);
+        }
     }
     listKeysByAddon() {
         const ids = world.getDynamicPropertyIds();
@@ -107,6 +134,9 @@ export class DynamicPropertyStorage {
     }
     lenKey(prefix) {
         return `${prefix}_len`;
+    }
+    typeKey(prefix) {
+        return `${prefix}_type`;
     }
     makePrefix(addonId, key) {
         const a = this.sanitize(addonId);
