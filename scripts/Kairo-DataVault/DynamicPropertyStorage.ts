@@ -1,4 +1,4 @@
-import { system, world } from "@minecraft/server";
+import { system, world, type Vector3 } from "@minecraft/server";
 import type { DataVaultManager } from "./DataVaultManager";
 import { ConsoleManager } from "../Kairo/utils/ConsoleManager";
 
@@ -43,18 +43,48 @@ export class DynamicPropertyStorage {
         world.setDynamicProperty(this.typeKey(prefix), type);
     }
 
-    public load(addonId: string, key: string): { data: string; type: string } {
+    public load(
+        addonId: string,
+        key: string,
+    ): {
+        value: boolean | number | string | null | Vector3;
+        type: string;
+    } {
         const prefix = this.makePrefix(addonId, key);
         const count = this.getCount(prefix);
-        if (!count || count <= 0) return { data: "", type: "" };
 
-        let result = "";
-        for (let i = 0; i < count; i++) {
-            result += (world.getDynamicProperty(this.chunkKey(prefix, i)) as string) || "";
+        if (!count || count <= 0) {
+            return { value: null, type: "null" };
         }
 
         const type = world.getDynamicProperty(this.typeKey(prefix)) as string;
-        return { data: result, type };
+        if (type === "string") {
+            let result = "";
+            for (let i = 0; i < count; i++) {
+                result += (world.getDynamicProperty(this.chunkKey(prefix, i)) as string) || "";
+            }
+            return { value: result, type };
+        }
+
+        const raw = world.getDynamicProperty(this.chunkKey(prefix, 0));
+
+        switch (type) {
+            case "number":
+                return { value: raw as number, type };
+
+            case "boolean":
+                return { value: raw as boolean, type };
+
+            case "null":
+                return { value: null, type };
+
+            case "object":
+                // Vector3
+                return { value: raw as Vector3, type };
+
+            default:
+                throw new Error(`Unknown stored type "${type}" for key "${key}"`);
+        }
     }
 
     public listKeysByAddon(): void {

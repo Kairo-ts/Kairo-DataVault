@@ -32,12 +32,14 @@ export class DataVaultManager {
 
     public loadData(addonId: string, key: string): void {
         const dataLoaded = this.dynamicPropertyStorage.load(addonId, key);
+        const value =
+            dataLoaded.type === "string" ? dataLoaded.value : JSON.stringify(dataLoaded.value);
 
         KairoUtils.sendKairoCommand(addonId, {
             commandId: SCRIPT_EVENT_COMMAND_IDS.DATA_LOADED,
             addonId: properties.id,
             key,
-            data: dataLoaded.data,
+            value,
             type: dataLoaded.type,
         });
     }
