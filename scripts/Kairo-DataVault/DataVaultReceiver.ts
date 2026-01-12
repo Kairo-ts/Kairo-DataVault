@@ -1,5 +1,5 @@
 import { ConsoleManager } from "../Kairo/utils/ConsoleManager";
-import type { KairoCommand } from "../Kairo/utils/KairoUtils";
+import type { KairoCommand, KairoResponse } from "../Kairo/utils/KairoUtils";
 import { SCRIPT_EVENT_COMMAND_IDS } from "./constants";
 import type { DataVaultManager } from "./DataVaultManager";
 
@@ -14,29 +14,33 @@ export class DataVaultReceiver {
         SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA,
     ]);
 
-    public handleScriptEvent(data: KairoCommand): void {
-        if (!DataVaultReceiver.VALID_COMMANDS.has(data.commandId)) {
+    public async handleScriptEvent(command: KairoCommand): Promise<void | KairoResponse> {
+        if (!DataVaultReceiver.VALID_COMMANDS.has(command.commandType)) {
             return;
         }
 
-        if (!data.addonId) {
-            ConsoleManager.error(`Addon ID missing: ${data}`);
+        if (!command.sourceAddonId) {
+            ConsoleManager.error(`Addon ID missing: ${command}`);
             return;
         }
 
-        if (!data.key) {
-            ConsoleManager.error(`Key missing: ${data}`);
+        if (!command.data.key) {
+            ConsoleManager.error(`Key missing: ${command}`);
             return;
         }
 
-        switch (data.commandId) {
+        switch (command.commandType) {
             case SCRIPT_EVENT_COMMAND_IDS.SAVE_DATA:
-                this.dataVaultManager.saveData(data.addonId, data.key, data.value, data.type);
-                break;
-
+                return this.dataVaultManager.saveData(
+                    command.sourceAddonId,
+                    command.data.key,
+                    command.data.value,
+                    command.data.type,
+                );
             case SCRIPT_EVENT_COMMAND_IDS.LOAD_DATA:
-                this.dataVaultManager.loadData(data.addonId, data.key);
-                break;
+                return this.dataVaultManager.loadData(command.sourceAddonId, command.data.key);
+            default:
+                return;
         }
     }
 }

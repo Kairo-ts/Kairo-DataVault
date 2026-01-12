@@ -12,6 +12,16 @@ export const SCRIPT_EVENT_IDS = {
     SHOW_ADDON_LIST: "kairo:showAddonList",
 };
 
+export const SCRIPT_EVENT_COMMAND_TYPES = {
+    KAIRO_ACK: "kairo_ack",
+    KAIRO_RESPONSE: "kairo_response",
+    SAVE_DATA: "save_data",
+    LOAD_DATA: "load_data",
+    DATA_LOADED: "data_loaded",
+    GET_PLAYER_KAIRO_DATA: "getPlayerKairoData",
+    GET_PLAYERS_KAIRO_DATA: "getPlayersKairoData",
+};
+
 export const SCRIPT_EVENT_MESSAGES = {
     NONE: "",
     ACTIVATE_REQUEST: "activate request",

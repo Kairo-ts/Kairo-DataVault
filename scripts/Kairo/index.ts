@@ -3,11 +3,13 @@ import { AddonPropertyManager, type AddonProperty } from "./addons/AddonProperty
 import { AddonInitializer } from "./addons/router/init/AddonInitializer";
 import { AddonManager } from "./addons/AddonManager";
 import { SCRIPT_EVENT_IDS } from "./constants/scriptevent";
-import type { KairoCommand } from "./utils/KairoUtils";
+import { KairoUtils, type KairoCommand, type KairoResponse } from "./utils/KairoUtils";
 
 type ActivateHandler = () => void | Promise<void>;
 type DeactivateHandler = () => void | Promise<void>;
-type ScriptEventHandler = (data: KairoCommand) => void | Promise<void>;
+type ScriptEventListener = (data: KairoCommand) => void | Promise<void>;
+type ScriptEventCommandHandler = (data: KairoCommand) => Promise<void | KairoResponse>;
+type TickHandler = () => void | Promise<void>;
 
 type HandlerOptions = {
     priority?: number;
@@ -26,7 +28,12 @@ export class Kairo {
 
     private static _initHooks: Stored<ActivateHandler>[] = [];
     private static _deinitHooks: Stored<DeactivateHandler>[] = [];
-    private static _seHooks: Stored<ScriptEventHandler>[] = [];
+    private static _commandHandler?: ScriptEventCommandHandler;
+    private static _seHooks: Stored<ScriptEventListener>[] = [];
+
+    private static _tickHooks: Stored<TickHandler>[] = [];
+    private static _tickIntervalId: number | undefined;
+    private static _tickEnabled = false;
 
     private constructor() {
         this.addonManager = AddonManager.create(this);
@@ -74,9 +81,15 @@ export class Kairo {
         if (typeof val === "function") this._pushSorted(this._deinitHooks, val);
         else this._pushSorted(this._deinitHooks, val.run, val.options);
     }
-    public static set onScriptEvent(val: Assignable<ScriptEventHandler>) {
-        if (typeof val === "function") this._pushSorted(this._seHooks, val);
-        else this._pushSorted(this._seHooks, val.run, val.options);
+    public static set onScriptEvent(val: ScriptEventCommandHandler) {
+        if (this._commandHandler) {
+            throw new Error("CommandHandler already registered");
+        }
+
+        this._commandHandler = val;
+    }
+    public static set onTick(fn: TickHandler) {
+        this.addTick(fn);
     }
 
     public static addActivate(fn: ActivateHandler, opt?: HandlerOptions) {
@@ -85,12 +98,16 @@ export class Kairo {
     public static addDeactivate(fn: DeactivateHandler, opt?: HandlerOptions) {
         this._pushSorted(this._deinitHooks, fn, opt);
     }
-    public static addScriptEvent(fn: ScriptEventHandler, opt?: HandlerOptions) {
+    public static addScriptEvent(fn: ScriptEventListener, opt?: HandlerOptions) {
         this._pushSorted(this._seHooks, fn, opt);
     }
 
-    public _scriptEvent(data: KairoCommand): void {
-        void Kairo._runScriptEvent(data);
+    public static addTick(fn: TickHandler, opt?: HandlerOptions) {
+        this._pushSorted(this._tickHooks, fn, opt);
+    }
+
+    public async _scriptEvent(data: KairoCommand): Promise<void | KairoResponse> {
+        return Kairo._runScriptEvent(data);
     }
 
     public _activateAddon(): void {
@@ -119,6 +136,7 @@ export class Kairo {
             }
         }
 
+        this._enableTick();
         this.getInstance().addonManager.setActiveState(true);
     }
 
@@ -135,20 +153,82 @@ export class Kairo {
             }
         }
 
+        this._disableTick();
         this.getInstance().addonManager.setActiveState(false);
     }
 
-    private static async _runScriptEvent(data: KairoCommand) {
+    private static async _runScriptEvent(data: KairoCommand): Promise<void | KairoResponse> {
+        let response: void | KairoResponse = undefined;
+
+        if (this._commandHandler) {
+            try {
+                response = await this._commandHandler(data);
+            } catch (e) {
+                system.run(() =>
+                    console.warn(
+                        `[Kairo.CommandHandler] ${
+                            e instanceof Error ? (e.stack ?? e.message) : String(e)
+                        }`,
+                    ),
+                );
+            }
+        }
+
         for (const { fn } of this._seHooks) {
             try {
                 await fn(data);
             } catch (e) {
                 system.run(() =>
                     console.warn(
-                        `[Kairo.onScriptEvent] ${e instanceof Error ? (e.stack ?? e.message) : String(e)}`,
+                        `[Kairo.onScriptEvent] ${
+                            e instanceof Error ? (e.stack ?? e.message) : String(e)
+                        }`,
                     ),
                 );
             }
         }
+
+        return response;
+    }
+
+    private static async _runTick(): Promise<void> {
+        if (!this._tickEnabled) return;
+
+        for (const { fn } of this._tickHooks) {
+            try {
+                await fn();
+            } catch (e) {
+                system.run(() =>
+                    console.warn(
+                        `[Kairo.onTick] ${e instanceof Error ? (e.stack ?? e.message) : String(e)}`,
+                    ),
+                );
+            }
+        }
+    }
+
+    private static _enableTick(): void {
+        if (this._tickIntervalId !== undefined) return;
+
+        this._tickEnabled = true;
+
+        this.addTick(
+            () => {
+                KairoUtils.onTick();
+            },
+            { priority: Number.MAX_SAFE_INTEGER },
+        );
+
+        this._tickIntervalId = system.runInterval(() => {
+            void this._runTick();
+        }, 1);
+    }
+
+    private static _disableTick(): void {
+        if (this._tickIntervalId === undefined) return;
+
+        system.clearRun(this._tickIntervalId);
+        this._tickIntervalId = undefined;
+        this._tickEnabled = false;
     }
 }
