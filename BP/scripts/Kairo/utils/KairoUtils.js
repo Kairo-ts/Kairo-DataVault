@@ -1,7 +1,7 @@
 import { system } from "@minecraft/server";
 import { SCRIPT_EVENT_COMMAND_TYPES, SCRIPT_EVENT_ID_PREFIX } from "../constants/scriptevent";
-import { properties } from "../../properties";
 import { KAIRO_COMMAND_TARGET_ADDON_IDS } from "../constants/system";
+import { properties } from "../../properties";
 export class KairoUtils {
     static async sendKairoCommand(targetAddonId, commandType, data = {}, timeoutTicks = 20) {
         return this.sendInternal(targetAddonId, commandType, data, timeoutTicks, false);
@@ -21,6 +21,16 @@ export class KairoUtils {
     }
     static generateRandomId(length = 8) {
         return Array.from({ length }, () => this.charset[Math.floor(Math.random() * this.charset.length)]).join("");
+    }
+    static async getPlayerKairoData(playerId) {
+        const kairoResponse = await KairoUtils.sendKairoCommandAndWaitResponse(KAIRO_COMMAND_TARGET_ADDON_IDS.KAIRO, SCRIPT_EVENT_COMMAND_TYPES.GET_PLAYER_KAIRO_DATA, {
+            playerId,
+        });
+        return kairoResponse.data.playerKairoData;
+    }
+    static async getPlayersKairoData() {
+        const kairoResponse = await KairoUtils.sendKairoCommandAndWaitResponse(KAIRO_COMMAND_TARGET_ADDON_IDS.KAIRO, SCRIPT_EVENT_COMMAND_TYPES.GET_PLAYERS_KAIRO_DATA);
+        return kairoResponse.data.playerKairoData;
     }
     static async saveToDataVault(key, value) {
         const type = value === null ? "null" : typeof value;
