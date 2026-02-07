@@ -25,7 +25,7 @@ export const properties: KairoAddonProperties = {
         authors: ["shizuku86"],
     },
     header: {
-        name: "Kairo-DataVault",
+        name: "Kairo DataVault",
         description:
             "It is a dedicated storage module, designed to be immutable and stable across all future versions of Minecraft",
         version: {
