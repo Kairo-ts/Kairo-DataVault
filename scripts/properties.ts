@@ -11,7 +11,7 @@ export const properties: KairoAddonProperties = {
             "It is a dedicated storage module, designed to be immutable and stable across all future versions of Minecraft.",
         version: {
             major: 1,
-            minor: 0,
+            minor: 1,
             patch: 0,
             prerelease: "dev.1",
             // build: "abc123",
