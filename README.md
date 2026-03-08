@@ -17,13 +17,9 @@ Kairo is built using the stable Script API:
 
 1. Install dependencies:
     ```bash
-    npm install
+    pnpm install
     ```
 2. Deploy
     ```bash
-    npm run build
-    ```
-3. Auto-deploy on file change:
-    ```bash
-    npm run dev
+    pnpm run build
     ```
