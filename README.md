@@ -6,8 +6,8 @@ This behavior pack serves as the persistent data vault for the Kairo. It is a de
 
 Kairo is built using the stable Script API:
 
-- `@minecraft/server` - v2.1.0
-- `@minecraft/server-ui` - v2.0.0
+- `@minecraft/server` - v2.5.0
+- `@minecraft/server-ui` - v2.5.0
 
 ## Requirements
 

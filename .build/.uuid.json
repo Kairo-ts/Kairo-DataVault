@@ -1,0 +1,15 @@
+{
+  "bp": {
+    "header": "f9f31d2c-f95e-4483-8edb-46c3dbff129e",
+    "module": {
+      "data": "068bfcac-2bd9-48b4-ae9f-8ad03cf78f28",
+      "script": "43c5c3ef-65ec-480e-8792-35426cdf91b4"
+    }
+  },
+  "rp": {
+    "header": "46040cf1-8deb-4c87-a294-eb4e5e6224f0",
+    "modules": {
+      "resources": "1e3962aa-6b31-43fb-8811-fbcb5ce2e630"
+    }
+  }
+}
